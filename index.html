@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Sensor Dashboard</title>
+</head>
+<body>
+
+    <header id="student-header">
+        <div id="student-info">
+            <div id="student-name">Здравко Беличaнов</div>
+            <div id="student-details">
+                <span>Фак. №: <strong>361224026</strong></span>
+                <span class="sep">|</span>
+                <span>Специалност: <strong>ИСИИ</strong></span>
+                <span class="sep">|</span>
+                <span>Дисциплина: <strong>ИТИС</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="dashboard">
+
+        <!-- TEMPERATURE GAUGE (original) -->
+        <div id="gauge">
+            <div id="major-ticks">
+                <span>0℃</span>
+                <span>25℃</span>
+                <span>50℃</span>
+            </div>
+            <div id="minor-ticks">
+                <span title="--i:1"></span>
+                <span title="--i:2"></span>
+                <span title="--i:3"></span>
+                <span title="--i:4"></span>
+                <span title="--i:5"></span>
+                <span title="--i:6"></span>
+                <span title="--i:7"></span>
+                <span title="--i:8"></span>
+                <span title="--i:9"></span>
+                <span title="--i:10"></span>
+                <span title="--i:11"></span>
+                <span title="--i:12"></span>
+                <span title="--i:13"></span>
+                <span title="--i:14"></span>
+                <span title="--i:15"></span>
+                <span title="--i:16"></span>
+                <span title="--i:17"></span>
+                <span title="--i:18"></span>
+                <span title="--i:19"></span>
+                <span title="--i:20"></span>
+            </div>
+            <div id="minor-ticks-bottom-mask"></div>
+            <div id="bottom-circle"></div>
+            <svg version="1.1" baseProfile="full" width="190" height="190" xmlns="http://www.w3.org/2000/svg">
+                <linearGradient id="gradient" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0%" stop-color="#8BE8FF"/>
+                    <stop offset="100%" stop-color="#FF2C00"/>
+                </linearGradient>
+                <path d="M5 95 A80 80 0 0 1 185 95" stroke=url(#gradient) fill="none" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="0 282.78"/>
+            </svg>
+            <div id="center-circle">
+                <span id="name">HEATING</span>
+                <span id="temperature">0</span>
+            </div>
+            <input type="range" id="range" max="50" min="0" value="0">
+        </div>
+
+        <!-- CO CONCENTRATION GAUGE -->
+        <div class="gauge-card" id="co-gauge">
+            <div class="card-header">
+                <span class="card-title">CO CONCENTRATION</span>
+                <div class="card-value-wrap">
+                    <span class="card-value" id="co-value">0</span>
+                    <span class="card-unit">ppm</span>
+                </div>
+            </div>
+            <div class="bar-track">
+                <div class="bar-fill" id="co-fill"></div>
+                <div class="bar-zones">
+                    <div class="zone zone-safe"></div>
+                    <div class="zone zone-warn"></div>
+                    <div class="zone zone-danger"></div>
+                </div>
+            </div>
+            <div class="bar-labels">
+                <span>0</span>
+                <span>500</span>
+                <span>1000</span>
+                <span style="color:#e24b4a">2000</span>
+            </div>
+            <div class="bar-legend">
+                <span class="dot dot-safe"></span><span>Safe</span>
+                <span class="dot dot-warn"></span><span>Caution</span>
+                <span class="dot dot-danger"></span><span>Danger</span>
+            </div>
+            <div class="status-bar" id="co-status">Safe level</div>
+            <input type="range" id="co-range" min="0" max="2000" value="0" step="10">
+        </div>
+
+        <!-- HUMIDITY GAUGE -->
+        <div class="gauge-card" id="humidity-gauge">
+            <div class="card-header">
+                <span class="card-title">HUMIDITY</span>
+                <div class="card-value-wrap">
+                    <span class="card-value" id="hum-value">0</span>
+                    <span class="card-unit">%</span>
+                </div>
+            </div>
+            <div class="seg-row" id="seg-row"></div>
+            <div class="seg-labels">
+                <span>0%</span>
+                <span>Optimal 40–60%</span>
+                <span>100%</span>
+            </div>
+            <div class="status-bar" id="hum-status">No data</div>
+            <input type="range" id="hum-range" min="0" max="100" value="0">
+        </div>
+
+    </div>
+
+    <script>
+        /* ---- TEMPERATURE (original) ---- */
+        const arc = document.querySelector("svg path");
+        const temperature = document.querySelector("#temperature");
+        const range = document.querySelector("#range");
+        range.addEventListener('input', (e) => {
+            temperature.textContent = e.target.value;
+            const arc_length = arc.getTotalLength();
+            const step = arc_length / (range.max - range.min);
+            const value = (e.target.value - range.min) * step;
+            arc.style.strokeDasharray = `${value} ${arc_length - value}`;
+        });
+
+        /* ---- CO CONCENTRATION ---- */
+        const coRange = document.getElementById('co-range');
+        const coValue = document.getElementById('co-value');
+        const coFill  = document.getElementById('co-fill');
+        const coStatus = document.getElementById('co-status');
+
+        function updateCO(val) {
+            coValue.textContent = val;
+            coFill.style.width = (val / 2000 * 100) + '%';
+            if (val < 50)        { coStatus.textContent = 'Safe level';       coStatus.className = 'status-bar status-safe'; }
+            else if (val < 200)  { coStatus.textContent = 'Low exposure';     coStatus.className = 'status-bar status-safe'; }
+            else if (val < 800)  { coStatus.textContent = 'Caution – ventilate'; coStatus.className = 'status-bar status-warn'; }
+            else                 { coStatus.textContent = 'Danger – evacuate!';  coStatus.className = 'status-bar status-danger'; }
+        }
+
+        coRange.addEventListener('input', e => updateCO(+e.target.value));
+
+        /* ---- HUMIDITY (segmented) ---- */
+        const SEGS = 20;
+        const segRow = document.getElementById('seg-row');
+        const humRange = document.getElementById('hum-range');
+        const humValue = document.getElementById('hum-value');
+        const humStatus = document.getElementById('hum-status');
+
+        for (let i = 0; i < SEGS; i++) {
+            const s = document.createElement('div');
+            s.className = 'seg';
+            segRow.appendChild(s);
+        }
+
+        function segColor(idx, val) {
+            const filled = val / 100 * SEGS;
+            if (idx >= filled) return '#e8e8e8';
+            const pct = (idx + 1) / SEGS * 100;
+            if (pct <= 20)  return '#85b7eb';
+            if (pct <= 40)  return '#378add';
+            if (pct <= 60)  return '#1d9e75';
+            if (pct <= 80)  return '#ef9f27';
+            return '#e24b4a';
+        }
+
+        function updateHumidity(val) {
+            humValue.textContent = val;
+            const segs = segRow.children;
+            for (let i = 0; i < SEGS; i++) segs[i].style.background = segColor(i, val);
+            if (val < 20)       { humStatus.textContent = 'Very dry';              humStatus.className = 'status-bar status-warn'; }
+            else if (val < 40)  { humStatus.textContent = 'Dry – slightly low';    humStatus.className = 'status-bar status-safe'; }
+            else if (val <= 60) { humStatus.textContent = 'Optimal humidity';      humStatus.className = 'status-bar status-safe'; }
+            else if (val <= 80) { humStatus.textContent = 'High – may cause mold'; humStatus.className = 'status-bar status-warn'; }
+            else                { humStatus.textContent = 'Very high – dangerous'; humStatus.className = 'status-bar status-danger'; }
+        }
+
+        humRange.addEventListener('input', e => updateHumidity(+e.target.value));
+
+        /* defaults */
+        updateCO(0);
+        updateHumidity(0);
+    </script>
+</body>
+</html>

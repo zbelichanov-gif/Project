@@ -1,0 +1,364 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: #5f4667;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 0 0 2rem;
+}
+
+/* ===================== STUDENT HEADER ===================== */
+#student-header {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+    padding: 14px 32px;
+    margin-bottom: 28px;
+}
+
+#student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#student-name {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.03em;
+}
+
+#student-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82em;
+    color: rgba(255,255,255,0.75);
+    flex-wrap: wrap;
+}
+
+#student-details strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+.sep {
+    color: rgba(255,255,255,0.35);
+}
+
+/* ===================== DASHBOARD LAYOUT ===================== */
+#dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===================== ORIGINAL TEMPERATURE GAUGE ===================== */
+#gauge {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    background: #fffffffb;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#major-ticks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+}
+
+#major-ticks span {
+    position: absolute;
+    font-size: 0.7em;
+    color: #3c3939;
+}
+
+#major-ticks span:nth-child(1) {
+    font-size: large;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#major-ticks span:nth-child(2) {
+    font-size: large;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#major-ticks span:nth-child(3) {
+    font-size: large;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+}
+
+#minor-ticks {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#minor-ticks span {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-top: 1px solid #afafaf;
+    transform: rotate(calc((var(--i) - 1) * 9 * 1deg));
+}
+
+#minor-ticks::after {
+    content: '';
+    position: absolute;
+    width: 93%;
+    height: 93%;
+    background: #fff;
+    border-radius: 50%;
+}
+
+#minor-ticks-bottom-mask {
+    position: absolute;
+    width: 80%;
+    height: 49%;
+    bottom: 0;
+    background: #fff;
+}
+
+#bottom-circle {
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background: linear-gradient(#efefef, #ffffff);
+    border-radius: 50%;
+    box-shadow: inset 0 5px 5px #e7e7e7;
+}
+
+svg {
+    position: absolute;
+}
+
+svg path {
+    transition: 1s;
+}
+
+#center-circle {
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    background: linear-gradient(180deg, #ffffff 0%, #4b3a59 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 10px 10px rgba(0,0,0,0.1);
+}
+
+#center-circle::before {
+    content: '';
+    position: absolute;
+    width: 145px;
+    height: 145px;
+    background: linear-gradient(0deg, #ffffff 0%, #000000 100%);
+    border-radius: 50%;
+}
+
+#name {
+    position: absolute;
+    font-size: 1em;
+    color: #ababab;
+    font-weight: 700;
+    top: 40px;
+}
+
+#temperature {
+    position: absolute;
+    font-size: 3em;
+    color: #cecece;
+}
+
+#range {
+    position: absolute;
+    width: 80%;
+    bottom: 10px;
+}
+
+/* ===================== NEW GAUGE CARDS ===================== */
+.gauge-card {
+    width: 400px;
+    min-height: 400px;
+    background: #fffffffb;
+    border-radius: 10px;
+    padding: 28px 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-title {
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 0.1em;
+}
+
+.card-value-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.card-value {
+    font-size: 2.8em;
+    font-weight: 700;
+    color: #3c3939;
+    line-height: 1;
+}
+
+.card-unit {
+    font-size: 1em;
+    color: #aaa;
+    font-weight: 500;
+}
+
+/* ---- Status bar ---- */
+.status-bar {
+    font-size: 0.8em;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-align: center;
+    transition: background 0.4s, color 0.4s;
+}
+
+.status-safe   { background: #eaf3de; color: #3b6d11; }
+.status-warn   { background: #faeeda; color: #854f0b; }
+.status-danger { background: #fcebeb; color: #a32d2d; }
+
+/* ===================== CO BAR GAUGE ===================== */
+#co-gauge {
+    justify-content: space-between;
+}
+
+.bar-track {
+    position: relative;
+    width: 100%;
+    height: 36px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #1d9e75, #ef9f27, #e24b4a);
+    border-radius: 8px;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+/* Zone markers */
+.bar-zones {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    pointer-events: none;
+}
+
+.zone { height: 100%; }
+.zone-safe   { width: 25%; border-right: 2px dashed rgba(255,255,255,0.6); }
+.zone-warn   { width: 37.5%; border-right: 2px dashed rgba(255,255,255,0.6); }
+.zone-danger { flex: 1; }
+
+.bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72em;
+    color: #aaa;
+    margin-top: -8px;
+}
+
+.bar-legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75em;
+    color: #666;
+    flex-wrap: wrap;
+}
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-safe   { background: #1d9e75; }
+.dot-warn   { background: #ef9f27; }
+.dot-danger { background: #e24b4a; }
+
+#co-range {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* ===================== HUMIDITY SEGMENTED GAUGE ===================== */
+#humidity-gauge {
+    justify-content: space-between;
+}
+
+.seg-row {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.seg {
+    flex: 1;
+    height: 48px;
+    border-radius: 5px;
+    background: #e8e8e8;
+    transition: background 0.35s ease;
+}
+
+.seg-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7em;
+    color: #aaa;
+    margin-top: -8px;
+}
+
+#hum-range {
+    width: 100%;
+    margin-top: auto;
+}
